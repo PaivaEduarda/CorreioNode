@@ -1,3 +1,5 @@
+package src;
+
 import bd.BDSQLServer;
 
 public class Programa
