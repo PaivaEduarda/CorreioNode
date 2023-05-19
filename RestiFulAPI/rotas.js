@@ -207,7 +207,7 @@ async function recuperacaoDeTodos (req, res)
         return res.status(422).json(erro);
     }
 
-    const ret = await Correios.recupereTodos();
+    const ret = await Correios.getCorreio();
 
     if (ret===null)
     {
