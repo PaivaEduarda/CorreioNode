@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
+
 public class Janela extends JFrame {
     //Logradouro agencia = (Logradouro) ClienteWS.getObjeto(Logradouro.class, "https://api.postmon.com.br/v1/cep", "13058442");
     private JTabbedPane tab = new JTabbedPane();
@@ -170,16 +171,16 @@ public class Janela extends JFrame {
         super.add(tab);
         super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        try {
+        /*try {
             var result = Correios.getCorreio();
             while (result.next())
             {
-                Correio correio = new Correio(result.getInt(1), result.getString(2), result.getString(3), result.getString(4), result.getString(5), result.getString(6), result.getInt(7));
+               // Correio correio = new Correio(result.getInt(1), result.getString(2), result.getString(3), result.getString(4), result.getString(5), result.getString(6), result.getInt(7));
                 vetorCorreio.add(correio);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }
+        }*/
 
         ler.setLayout(null);
         adicionar.setLayout(null);
@@ -257,6 +258,11 @@ public class Janela extends JFrame {
             }
             catch (Exception err)
             {
+
+
+
+
+
                 JOptionPane.showMessageDialog(null, err.getMessage());
             }
         });
@@ -558,7 +564,7 @@ public class Janela extends JFrame {
                         updateTxtNmrCasa.setText(cr.getNmrCasa().toString());
 
                         Logradouro agencia = (Logradouro) ClienteWS.getObjeto(Logradouro.class, "https://api.postmon.com.br/v1/cep", cr.getCep());
-
+                        
                         updateTxtRua.setText(agencia.getLogradouro());
                         updateTxtBairro.setText(agencia.getBairro());
                         updateTxtCidade.setText(agencia.getCidade());

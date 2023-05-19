@@ -1,3 +1,5 @@
+package Endereco;
+
 public class InfoCidade implements Cloneable
 {
     private String codigo_ibge;
