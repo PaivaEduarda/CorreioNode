@@ -89,7 +89,7 @@ async function getCorreios ()
     }
 }
 
-module.exports = {incluir, alterar, excluir, getCorreio, getCorreio}
+module.exports = {incluir, alterar, excluir, getCorreio, getCorreios}
 
 
 

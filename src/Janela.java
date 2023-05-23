@@ -341,7 +341,7 @@ public class Janela extends JFrame {
         btnAdicionar.addActionListener(e -> {
             try{
                 int id = Correios.ultimoId();
-                Correio correio = new Correio(id, addTxtCPFRemetente.getText(), addTxtRemetente.getText(), addTxtNomeDest.getText(), addTxtCep.getText(), addTxtComplemento.getText(), Integer.parseInt(addTxtNmrCasa.getText()));
+                Correio correio = new Correio(0, addTxtCPFRemetente.getText(), addTxtRemetente.getText(), addTxtNomeDest.getText(), addTxtCep.getText(), addTxtComplemento.getText(), Integer.parseInt(addTxtNmrCasa.getText()));
                 addCodigo.setText("Codigo de rastreio: " + correio.getId().toString());
                 try
                 {
@@ -366,8 +366,14 @@ public class Janela extends JFrame {
                 if(x == 0)
                 {
                     if (correio != null) {
-                        vetorCorreio.add(correio);
-                        Correios.incluir(correio);
+                        try{
+                            vetorCorreio.add(correio);
+                            Correios.incluir(correio);
+                        }
+                        catch (Exception erro) {
+                            JOptionPane.showMessageDialog(null, "Erro ao incluir!");
+                        }
+
                     }
                     JOptionPane.showMessageDialog(null, "Entrega incluida com sucesso!");
                 }

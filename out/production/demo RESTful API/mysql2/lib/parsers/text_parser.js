@@ -78,6 +78,32 @@ function compile(fields, options, config) {
     options.typeCast = config.typeCast;
   }
 
+  function wrap(field, _this) {
+    return {
+      type: typeNames[field.columnType],
+      length: field.columnLength,
+      db: field.schema,
+      table: field.table,
+      name: field.name,
+      string: function(encoding = field.encoding) {
+        if (field.columnType === Types.JSON && encoding === field.encoding) {
+          // Since for JSON columns mysql always returns charset 63 (BINARY),
+          // we have to handle it according to JSON specs and use "utf8",
+          // see https://github.com/sidorares/node-mysql2/issues/1661
+          console.warn(`typeCast: JSON column "${field.name}" is interpreted as BINARY by default, recommended to manually set utf8 encoding: \`field.string("utf8")\``);
+        }
+
+        return _this.packet.readLengthCodedString(encoding);
+      },
+      buffer: function() {
+        return _this.packet.readLengthCodedBuffer();
+      },
+      geometry: function() {
+        return _this.packet.parseGeometryValue();
+      }
+    };
+  }
+
   const parserFn = genFunc();
 
   /* eslint-disable no-trailing-spaces */
@@ -88,42 +114,14 @@ function compile(fields, options, config) {
   );
 
   // constructor method
-  parserFn('constructor() {');
+  parserFn('constructor(fields) {');
   // node-mysql typeCast compatibility wrapper
   // see https://github.com/mysqljs/mysql/blob/96fdd0566b654436624e2375c7b6604b1f50f825/lib/protocol/packets/Field.js
   if (typeof options.typeCast === 'function') {
     parserFn('const _this = this;');
-    for(let i=0; i<fields.length; ++i) {
-      const field = fields[i];
-      const encodingExpr = helpers.srcEscape(field.encoding);
-      const readCode = readCodeFor(
-        fields[i].columnType,
-        fields[i].characterSet,
-        encodingExpr,
-        config,
-        options
-      );
-      parserFn(`this.wrap${i} = {
-        type: ${helpers.srcEscape(typeNames[field.columnType])},
-        length: ${helpers.srcEscape(field.columnLength)},
-        db: ${helpers.srcEscape(field.schema)},
-        table: ${helpers.srcEscape(field.table)},
-        name: ${helpers.srcEscape(field.name)},
-        string: function() {
-          return _this.packet.readLengthCodedString(${encodingExpr});
-        },
-        buffer: function() {
-          return _this.packet.readLengthCodedBuffer();
-        },
-        geometry: function() {
-          return _this.packet.parseGeometryValue();
-        },
-        readNext: function() {
-          const packet = _this.packet;
-          return ${readCode};
-        }
-      };`);
-    }
+    parserFn('for(let i=0; i<fields.length; ++i) {');
+    parserFn('this[`wrap${i}`] = wrap(fields[i], _this);');
+    parserFn('}');
   }
   parserFn('}');
 
@@ -165,9 +163,7 @@ function compile(fields, options, config) {
     } else {
       lvalue = `result[${fieldName}]`;
     }
-    if (typeof options.typeCast === 'function') {
-      parserFn(`${lvalue} = options.typeCast(this.wrap${i}, this.wrap${i}.readNext);`);
-    } else if (options.typeCast === false) {
+    if (options.typeCast === false) {
       parserFn(`${lvalue} = packet.readLengthCodedBuffer();`);
     } else {
       const encodingExpr = `fields[${i}].encoding`;
@@ -178,7 +174,11 @@ function compile(fields, options, config) {
         config,
         options
       );
-      parserFn(`${lvalue} = ${readCode};`);
+      if (typeof options.typeCast === 'function') {
+        parserFn(`${lvalue} = options.typeCast(this.wrap${i}, function() { return ${readCode} });`);
+      }  else {
+        parserFn(`${lvalue} = ${readCode};`);
+      }
     }
   }
 
@@ -195,6 +195,9 @@ function compile(fields, options, config) {
       'Compiled text protocol row parser',
       parserFn.toString()
     );
+  }
+  if (typeof options.typeCast === 'function') {
+    return parserFn.toFunction({wrap});
   }
   return parserFn.toFunction();
 }

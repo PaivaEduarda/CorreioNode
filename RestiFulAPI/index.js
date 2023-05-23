@@ -23,11 +23,11 @@ async function ativacaoDoServidor ()
     
     app.use(express.json());   // faz com que o express consiga processar JSON
 
-    app.post  ('/correios'        , rotas.inclusao);
-    app.put   ('/atualizarCorreio/:idCorreio', rotas.atualizacao);
-    app.delete('/RemoverCorreio/:idCorreio', rotas.remocao);
-    app.get   ('/RecuperarCorreio/:idCorreio', rotas.recuperacaoDeUm);
-    app.get   ('/correios'        , rotas.recuperacaoDeTodos);
+    app.post   ('/correio'        , rotas.inclusao);
+    app.put    ('/atualizarCorreio/:idCorreio', rotas.atualizacao);
+    app.delete ('/RemoverCorreio/:idCorreio', rotas.remocao);
+    app.get    ('/RecuperarCorreio/:idCorreio', rotas.recuperacaoDeUm);
+    app.get    ('/correios'        , rotas.recuperacaoDeTodos);
 
     console.log ('Servidor ativo na porta 3000...');
     app.listen(3000);

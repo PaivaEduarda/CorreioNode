@@ -1,6 +1,7 @@
 package bd.daos;
 
 import java.sql.*;
+import java.util.LinkedHashMap;
 
 import Endereco.ClienteWS;
 import bd.*;
@@ -30,26 +31,16 @@ public class Correios
             throw new Exception("entrega ainda não cadastrada!");
         try
         {
-            String sql;
-            sql = "INSERT INTO CorreioEntrega" +
-                    "(cpf, nomeRemetente, nomeDestinatario, cep, complemento, nmrCasa)" +
-                    "VALUES" +
-                    "(?,?,?,?,?,?)";
-            BDSQLServer.COMANDO.prepareStatement(sql);
+            try{
+                ClienteWS.postObjeto( correio, LinkedHashMap.class, "http://localhost:3000/correio");
+            }
+            catch (Exception erro) {
+                throw new Exception(erro.getMessage());
+            }
 
-            BDSQLServer.COMANDO.setString(1, correio.getCPF());
-            BDSQLServer.COMANDO.setString(2, correio.getNomeRemetente());
-            BDSQLServer.COMANDO.setString(3, correio.getNomeDestinatario());
-            BDSQLServer.COMANDO.setString(4, correio.getCep());
-            BDSQLServer.COMANDO.setString(5, correio.getComplemento());
-            BDSQLServer.COMANDO.setInt(6, correio.getNmrCasa());
-
-            BDSQLServer.COMANDO.executeUpdate();
-            BDSQLServer.COMANDO.commit();
         }
-        catch (SQLException erro) {
-            BDSQLServer.COMANDO.rollback();
-            throw new Exception(erro.getMessage());
+        catch (Exception erro) {
+            throw new Exception("Erro ao inserir AAAAAAAAAA");
         }
     }
 

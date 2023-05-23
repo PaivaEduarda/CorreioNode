@@ -6,24 +6,26 @@ const Comunicado = require ('./comunicado.js');
 // para a rota de CREATE
 async function inclusao (req, res)
 {
-    if (Object.values(req.body).length!=3 || !req.body.cpf || !req.body.nomeRemetente || !req.body.nomeDestinatario || !req.body.cep || !req.body.complemento || !req.body.nmrCasa)
+    if (Object.values(req.body).length!=7 || !req.body.cpf || !req.body.nomeRemetente || !req.body.nomeDestinatario || !req.body.cep || !req.body.complemento || !req.body.nmrCasa)
     {
         const erro = Comunicado.novo('DdI','Dados inesperados','Não foram fornecidos exatamente as 6 informações esperadas de um Correio (cpf, nomeRemetente, nomeDestinatario, cep, complemento e nmrCasa)').object;
         return res.status(422).json(erro);
     }
     
-    let Correio;
+    let Cor;
     try
     {
-        Correio = Correio.novo (req.body.cpf,req.body.nomeRemetente, req.body.nomeDestinatario, req.body.cep, req.body.complemento, req.body.nmrCasa);
+        Cor = Correio.novo (req.body.cpf,req.body.nomeRemetente, req.body.nomeDestinatario, req.body.cep, req.body.complemento, req.body.nmrCasa);
     }
+
     catch (excecao)
     {
+        console.log("oi");
         const erro = Comunicado.novo('TDE','Dados de tipos errados','Codigo deve ser um numero natural positivo, nome deve ser um texto não vazio e preço deve ser um número real positivo').object;
         return res.status(422).json(erro);
     }
 
-    const ret = await Correios.inclua(Correio);
+    const ret = await Correios.incluir(Cor);
 
     if (ret===null)
     {
@@ -47,7 +49,7 @@ async function inclusao (req, res)
 // para a rota de UPDATE
 async function atualizacao (req, res)
 {
-    if (Object.values(req.body).length!=3 || !req.body.cpf || !req.body.nomeRemetente || !req.body.nomeDestinatario || !req.body.cep || !req.body.complemento || !req.body.nmrCasa)
+    if (Object.values(req.body).length!= 7 || !req.body.cpf || !req.body.nomeRemetente || !req.body.nomeDestinatario || !req.body.cep || !req.body.complemento || !req.body.nmrCasa)
     {
         const erro = Comunicado.novo('DdI','Dados inesperados','Não foram fornecidos exatamente as 6 informações esperadas de um Correio (cpf, nomeRemetente, nomeDestinatario, cep, complemento e nmrCasa)').object;
         return res.status(422).json(erro);
