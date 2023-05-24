@@ -60,8 +60,6 @@ public class Janela extends JFrame {
     private JButton updateProcurarEntrega = new JButton("Procurar");
     private JButton updateAdicionar = new JButton("Atualizar");
 
-
-
     //label do panel ler
     private JLabel digiteCodigo = new JLabel("Digite o codigo de rastreio: ");
     private JLabel infoRemetente = new JLabel("INFORMACOES DO REMETENTE: ");
@@ -233,7 +231,7 @@ public class Janela extends JFrame {
         ler.add(nmrCasa);
 
         procurarEntrega.addActionListener(e ->{
-            try{
+            try {
                 boolean encontrou = false;
                 for(var cr : vetorCorreio)
                 {
@@ -258,11 +256,6 @@ public class Janela extends JFrame {
             }
             catch (Exception err)
             {
-
-
-
-
-
                 JOptionPane.showMessageDialog(null, err.getMessage());
             }
         });
@@ -558,6 +551,7 @@ public class Janela extends JFrame {
         updateProcurarEntrega.addActionListener(e -> {
             boolean encontrou = false;
             try{
+                JOptionPane.showMessageDialog(null, vetorCorreio.get(8));
                 for(var cr : vetorCorreio)
                 {
                     if(updatetxtCodigo.getText().equals(cr.getId().toString()))
