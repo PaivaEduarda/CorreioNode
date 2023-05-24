@@ -534,11 +534,11 @@ public class Janela extends JFrame {
         updateTxtCidade.setEditable(false);
         updateTxtBairro.setEditable(false);
 
-        /*//Ação do botão atualizar
+        //Ação do botão atualizar
         updateProcurarEntrega.addActionListener(e -> {
-            boolean encontrou = false;
             try{
-                for(var cr : vetorCorreio)
+                Correio cr = Correios.getCorreio(Integer.parseInt(updatetxtCodigo.getText()));
+                if(cr != null)
                 {
                     if(updatetxtCodigo.getText().equals(cr.getIdCorreio().toString()))
                     {
@@ -550,24 +550,23 @@ public class Janela extends JFrame {
                         updateTxtNmrCasa.setText(cr.getNmrCasa().toString());
 
                         Logradouro agencia = (Logradouro) ClienteWS.getObjeto(Logradouro.class, "https://api.postmon.com.br/v1/cep", cr.getCep());
-                        
+
                         updateTxtRua.setText(agencia.getLogradouro());
                         updateTxtBairro.setText(agencia.getBairro());
                         updateTxtCidade.setText(agencia.getCidade());
                         updateTxtEstado.setText(agencia.getEstado());
-                        encontrou = true;
                         updatetxtCodigo.setEditable(false);
                     }
                 }
-                encontrarInfo(encontrou);
-                if ( encontrarInfo(encontrou) == false)
-                    updatetxtCodigo.setEditable(true);
+                else{
+                    JOptionPane.showMessageDialog(null,"Erro ao localizar a entrega");
+                }
             }
             catch (Exception err)
             {
                 JOptionPane.showMessageDialog(null, err.getMessage());
             }
-        });*/
+        });
 
         updateAdicionar.addActionListener(e -> {
             try{

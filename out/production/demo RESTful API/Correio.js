@@ -8,7 +8,7 @@ class Correio
     #complemento
     #nmrCasa
 
-    constructor ( cpf, nomeRemetente, nomeDestinatario, cep, complemento, nmrCasa)
+    constructor (idCorreio, cpf, nomeRemetente, nomeDestinatario, cep, complemento, nmrCasa)
     {
         this.cpf = cpf
         this.nomeRemetente = nomeRemetente
@@ -16,6 +16,7 @@ class Correio
         this.cep = cep
         this.complemento = complemento
         this.nmrCasa = nmrCasa
+        this.idCorreio = idCorreio
     }
 
     get idCorreio ()
@@ -110,9 +111,9 @@ class Correio
     }
 }
 
-function novo (cpf,nomeRemetente,nomeDestinatario,cep,complemento,nmrCasa)
+function novo (idCorreio, cpf,nomeRemetente,nomeDestinatario,cep,complemento,nmrCasa)
 {
-    return new Correio (cpf,nomeRemetente,nomeDestinatario,cep,complemento,nmrCasa);
+    return new Correio (idCorreio, cpf,nomeRemetente,nomeDestinatario,cep,complemento,nmrCasa);
 }
 
 module.exports = {novo}

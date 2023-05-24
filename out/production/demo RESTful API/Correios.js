@@ -43,7 +43,8 @@ async function alterar (correio)
     try
     {
         const sql   = 'UPDATE CorreioEntrega SET cpf=?, nomeRemetente=?, nomeDestinatario=?, cep=?, complemento=?, nmrCasa=? WHERE idCorreio=?';
-        const dados = [correio.cpf,correio.nomeRemetente,correio.nomeDestinatario,correio.cep,correio.complemento, correio.nmrCasa];
+        const dados = [correio.cpf,correio.nomeRemetente,correio.nomeDestinatario,correio.cep,correio.complemento, correio.nmrCasa, correio.idCorreio];
+
         await conexao.query (sql,dados);
         return true;
     }
@@ -57,13 +58,12 @@ async function excluir (correio)
 {
     const conexao = await bd.getConexao ();
     if (conexao==null) return null;
-
+    
     try
     {
-        console.log("oiyi");
         const sql   = 'DELETE FROM CorreioEntrega WHERE idCorreio=?';
         const dados = [correio];
-        cosole.log(dados);
+        console.log(sql + dados)
         await conexao.query (sql,dados);
         return true;
     }
@@ -77,12 +77,13 @@ async function getCorreio (idCorreio)
 {
     const conexao = await bd.getConexao();
     if (conexao==null) return null;
+
     try
     {
         const  codigo     = 'SELECT * FROM CorreioEntrega WHERE idCorreio=?';
         const  dados   = [idCorreio]; 
-        const [linha] = await conexao.execute(codigo, dados);
-        return linha;
+        const [linhas] = await conexao.execute(codigo, dados);
+        return linhas;
     }
     catch (excecao)
     {

@@ -55,10 +55,10 @@ async function atualizacao (req, res)
         return res.status(422).json(erro);
     }
     
-    let Correio;
+    let correio;
     try
     {
-        Correio = Correio.novo (req.body.cpf,req.body.nomeRemetente, req.body.nomeDestinatario, req.body.cep, req.body.complemento, req.body.nmrCasa);
+        correio = Correio.novo (req.body.idCorreio, req.body.cpf,req.body.nomeRemetente, req.body.nomeDestinatario, req.body.cep, req.body.complemento, req.body.nmrCasa);
     }
     catch (excecao)
     {
@@ -68,13 +68,13 @@ async function atualizacao (req, res)
 
     const idCorreio = req.params.idCorreio;
     
-    if (idCorreio!=Correio.idCorreio)
+    if (idCorreio!=correio.idCorreio)
     {
         const erro = Comunicado.novo('TMC','Mudança de código','Tentativa de mudar o código do Correio').object;
         return res.status(400).json(erro);    
     }
     
-    let ret = await Correios.recuperacaoDeUm(idCorreio);
+    let ret = await Correios.alterar(idCorreio);
 
     if (ret===null)
     {
@@ -94,7 +94,9 @@ async function atualizacao (req, res)
         return res.status(404).json(erro);
     }
 
-    ret = await Correios.alterar(Correio);
+    ret = await Correios.alterar(correio);
+
+    console.log(ret)
 
     if (ret===null)
     {
@@ -118,7 +120,6 @@ async function atualizacao (req, res)
 // para a rota de DELETE
 async function remocao (req, res)
 {
-    console.log("ret");
 
     if (Object.values(req.body).length!=0)
     {
@@ -127,9 +128,8 @@ async function remocao (req, res)
     }
     
     const idCorreio = req.params.idCorreio;
-    console.log(idCorreio);
-    let ret = await Correios.recuperacaoDeUm(idCorreio);
-    console.log(ret);
+    let ret = await Correios.getCorreio(idCorreio);
+    console.log(ret)
     if (ret===null)
     {
         const  erro = Comunicado.novo('CBD','Sem conexão com o BD','Não foi possível estabelecer conexão com o banco de dados').object;
@@ -148,7 +148,7 @@ async function remocao (req, res)
         return res.status(404).json(erro);
     }
 
-    ret = await Correios.excluir(ret);
+    ret = await Correios.excluir(idCorreio);
     console.log(ret);
 
     if (ret===null)
@@ -214,7 +214,7 @@ async function recuperacaoDeTodos (req, res)
         return res.status(422).json(erro);
     }
 
-    const ret = await Correios.recuperacaoDeUm();
+    const ret = await Correios.getCorreios();
 
     if (ret===null)
     {

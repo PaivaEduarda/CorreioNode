@@ -27,7 +27,8 @@ public class Correios {
         Boolean c = false;
         try {
             try {
-                c = ClienteWS.delete("http://localhost:3000/RemoverCorreio", String.valueOf(id));
+                c = ClienteWS.delete("http://localhost:3000/RemoverCorreio", Integer.toString(id));
+                System.out.println(c);
             } catch (Exception erro) {
                 throw new Exception("Erro ao deletar correio");
             }
@@ -55,36 +56,17 @@ public class Correios {
     }*/
 
     public static void alterar(Correio correio) throws Exception {
-       /* if (correio == null)
-            throw new Exception("Informações não fornecidas. Verifique novamente!");
-        if (!(cadastrado(correio.getIdCorreio())))
-            throw new Exception("Id não cadastrado!");
+        if (correio == null)
+            throw new Exception("entrega ainda não cadastrada!");
         try {
-            String sql = "";
-            sql = "UPDATE CorreioEntrega " +
-                    "SET cpf = ?," +
-                    "nomeRemetente = ?, " +
-                    "nomeDestinatario = ?, " +
-                    "cep = ?," +
-                    "complemento = ?," +
-                    "nmrCasa = ? " +
-                    "WHERE idCorreio = ?;";
-            BDSQLServer.COMANDO.prepareStatement(sql);
-            BDSQLServer.COMANDO.setString(1, correio.getCpf());
-            BDSQLServer.COMANDO.setString(2, correio.getNomeRemetente());
-            BDSQLServer.COMANDO.setString(3, correio.getNomeDestinatario());
-            BDSQLServer.COMANDO.setString(4, correio.getCep());
-            BDSQLServer.COMANDO.setString(5, correio.getComplemento());
-            BDSQLServer.COMANDO.setInt(6, correio.getNmrCasa());
-            BDSQLServer.COMANDO.setInt(7, correio.getIdCorreio());
-
-
-            BDSQLServer.COMANDO.executeUpdate();
-            BDSQLServer.COMANDO.commit();
-        } catch (SQLException erro) {
-            BDSQLServer.COMANDO.rollback();
-            throw new Exception(erro.getMessage());
-        }*/
+            try {
+                ClienteWS.putObjeto(correio, LinkedHashMap.class, "http://localhost:3000/atualizarCorreio/" + correio.getIdCorreio());
+            } catch (Exception erro) {
+                throw new Exception(erro.getMessage());
+            }
+        } catch (Exception erro) {
+            throw new Exception("Erro ao atualizar AAAAAAAAAA");
+        }
     }
 
     public static Correio getCorreio(int id) throws Exception {
