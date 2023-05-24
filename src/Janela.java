@@ -1,4 +1,3 @@
-import bd.core.MeuResultSet;
 import bd.daos.Correios;
 import bd.dbos.Correio;
 import Endereco.*;
@@ -121,27 +120,7 @@ public class Janela extends JFrame {
     private JLabel updateComplemento = new JLabel("Complemento: ");
     private JLabel updateNmrCasa = new JLabel("Numero da casa:");
 
-    private ArrayList<Correio> vetorCorreio = new ArrayList<>();
 
-    public void DeletarPorID(int id)
-    {
-        for (int i = 0; i < vetorCorreio.toArray().length; i++) {
-            if (vetorCorreio.get(i).getId() == id) {
-                vetorCorreio.remove(i);
-                break;
-            }
-        }
-    }
-
-    public void AtualizarPorID(int id, Correio correio)
-    {
-        for (int i = 0; i < vetorCorreio.toArray().length; i++) {
-            if (vetorCorreio.get(i).getId() == id) {
-                vetorCorreio.set(i, correio);
-                break;
-            }
-        }
-    }
     public boolean encontrarInfo( boolean encontrou )
     {
         if(encontrou == false) {
@@ -229,14 +208,14 @@ public class Janela extends JFrame {
         ler.add(estado);
         ler.add(complemento);
         ler.add(nmrCasa);
-        Correio corr = new Correio();
+
         procurarEntrega.addActionListener(e ->{
             try {
-                corr = Correios.getCorreio(Integer.parseInt(txtCodigo.toString()));
-                boolean encontrou = false;
-
-                    if(txtCodigo.getText().equals(corr.getId().toString())) {
-                        cpfRemetente.setText("CPF: " + cr.getCPF());
+                Correio cr = Correios.getCorreio(Integer.parseInt(txtCodigo.getText()));
+                if(cr != null)
+                {
+                    if(txtCodigo.getText().equals(cr.getIdCorreio().toString())) {
+                        cpfRemetente.setText("CPF: " + cr.getCpf());
                         nomeRemetente.setText("Nome: " + cr.getNomeRemetente());
                         nomeDestinatario.setText("Nome: " + cr.getNomeDestinatario());
                         cep.setText("Cep: " + cr.getCep());
@@ -249,10 +228,11 @@ public class Janela extends JFrame {
                         bairro.setText("Bairro: " + agencia.getBairro());
                         cidade.setText("Cidade: " + agencia.getCidade());
                         estado.setText("Estado: " + agencia.getEstado());
-                        encontrou = true;
                     }
-
-                //encontrarInfo(encontrou);
+                }
+                else{
+                    JOptionPane.showMessageDialog(null, "Entrega não localizada!");
+                }
             }
             catch (Exception err)
             {
@@ -333,9 +313,8 @@ public class Janela extends JFrame {
         //Ação do botão adicionar
         btnAdicionar.addActionListener(e -> {
             try{
-                int id = Correios.ultimoId();
                 Correio correio = new Correio(0, addTxtCPFRemetente.getText(), addTxtRemetente.getText(), addTxtNomeDest.getText(), addTxtCep.getText(), addTxtComplemento.getText(), Integer.parseInt(addTxtNmrCasa.getText()));
-                addCodigo.setText("Codigo de rastreio: " + correio.getId().toString());
+                addCodigo.setText("Codigo de rastreio: " + correio.getIdCorreio().toString());
                 try
                 {
                     Logradouro agencia = (Logradouro) ClienteWS.getObjeto(Logradouro.class, "https://api.postmon.com.br/v1/cep", addTxtCep.getText());
@@ -351,7 +330,7 @@ public class Janela extends JFrame {
 
                 String[] options = {"Sim", "Nao"};
 
-                int x = JOptionPane.showOptionDialog(null, "Codigo de rasteio: " + correio.getId().toString() + "\n" + "\n" +  "INFORMACOES DO REMETENTE: " + "\n" + "\n" +  "CPF: " + addTxtCPFRemetente.getText() + "\n" + "Nome: " + addTxtRemetente.getText() + "\n" + "\n" +"INFORMACOES DO DESTINATARIO: " + "\n" + "\n" + "Nome: " + addTxtNomeDest.getText()
+                int x = JOptionPane.showOptionDialog(null, "Codigo de rasteio: " + correio.getIdCorreio().toString() + "\n" + "\n" +  "INFORMACOES DO REMETENTE: " + "\n" + "\n" +  "CPF: " + addTxtCPFRemetente.getText() + "\n" + "Nome: " + addTxtRemetente.getText() + "\n" + "\n" +"INFORMACOES DO DESTINATARIO: " + "\n" + "\n" + "Nome: " + addTxtNomeDest.getText()
                                 + "\n" + "Cep: " + addTxtCep.getText() + "\n" + "Rua: " + addTxtRua.getText() + "\n" + "Cidade: " + addTxtCidade.getText() + "\n" +  "Estado: " + addTxtBairro.getText() + "\n" + "Complemento: " + addTxtComplemento.getText() + "\n" + "Numero da Casa: " + addTxtNmrCasa.getText() + "\n", "Revise as informacoes da entrega:",
                         JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
                 System.out.println(x);
@@ -360,8 +339,8 @@ public class Janela extends JFrame {
                 {
                     if (correio != null) {
                         try{
-                            vetorCorreio.add(correio);
-                            Correios.incluir(correio);
+                             Correios.incluir(correio);
+                             /*addCodigo.setText(String.valueOf(Correios.ultimoId()));*/
                         }
                         catch (Exception erro) {
                             JOptionPane.showMessageDialog(null, "Erro ao incluir!");
@@ -421,51 +400,59 @@ public class Janela extends JFrame {
         deletar.add(btnDeletar);
 
         btnProcurarDeletar.addActionListener(e -> {
-                    try {
-                        boolean encontrou = false;
-                        for (var cr : vetorCorreio) {
-                            if (deleteTxtCodigo.getText().equals(cr.getId().toString())) {
-                                deletarCPFRemetente.setText("CPF: " + cr.getCPF());
-                                deletarNomeRemetente.setText("Nome: " + cr.getNomeRemetente());
-                                deletarNomeDestinatario.setText("Nome: " + cr.getNomeDestinatario());
-                                deletarCep.setText("Cep: " + cr.getCep());
-                                deletarComplemento.setText("Complemento: " + cr.getComplemento());
-                                deletarNmrCasa.setText("Numero da Casa: " + cr.getNmrCasa());
+            try 
+            {
+                Correio cr = Correios.getCorreio(Integer.parseInt(deleteTxtCodigo.getText()));
+                if(cr != null)
+                {
+                    if (deleteTxtCodigo.getText().equals(cr.getIdCorreio().toString())) {
+                        deletarCPFRemetente.setText("CPF: " + cr.getCpf());
+                        deletarNomeRemetente.setText("Nome: " + cr.getNomeRemetente());
+                        deletarNomeDestinatario.setText("Nome: " + cr.getNomeDestinatario());
+                        deletarCep.setText("Cep: " + cr.getCep());
+                        deletarComplemento.setText("Complemento: " + cr.getComplemento());
+                        deletarNmrCasa.setText("Numero da Casa: " + cr.getNmrCasa());
 
-                                Logradouro agencia = (Logradouro) ClienteWS.getObjeto(Logradouro.class, "https://api.postmon.com.br/v1/cep", cr.getCep());
+                        Logradouro agencia = (Logradouro) ClienteWS.getObjeto(Logradouro.class, "https://api.postmon.com.br/v1/cep", cr.getCep());
 
-                                deletarLogradouro.setText("Rua: " + agencia.getLogradouro());
-                                deletarBairro.setText("Bairro: " + agencia.getBairro());
-                                deletarCidade.setText("Cidade: " + agencia.getCidade());
-                                deletarEstado.setText("Estado: " + agencia.getEstado());
-                                encontrou = true;
-                            }
-                        }
-                        encontrarInfo(encontrou);
+                        deletarLogradouro.setText("Rua: " + agencia.getLogradouro());
+                        deletarBairro.setText("Bairro: " + agencia.getBairro());
+                        deletarCidade.setText("Cidade: " + agencia.getCidade());
+                        deletarEstado.setText("Estado: " + agencia.getEstado());
                     }
-                    catch (Exception erro)
-                    {
-                        erro.printStackTrace();
-                        JOptionPane.showMessageDialog(null, erro.getMessage());
-                    }
-                });
+                }
+                else{
+                    JOptionPane.showMessageDialog(null,"Erro ao localizar a entrega");
+                }
+            }
+            catch (Exception erro)
+            {
+                erro.printStackTrace();
+                JOptionPane.showMessageDialog(null, erro.getMessage());
+            }
+        });
+
         btnDeletar.addActionListener(e -> {
             try{
-                DeletarPorID(Integer.parseInt(deleteTxtCodigo.getText()));
-                Correios.excluir(Integer.parseInt(deleteTxtCodigo.getText()));
+                Boolean excluiu = Correios.excluir(Integer.parseInt(deleteTxtCodigo.getText()));
+                if(excluiu)
+                {
+                    JOptionPane.showMessageDialog(null, "Entrega cancelada com sucesso!");
+                    deletarCPFRemetente.setText("CPF: ");
+                    deletarNomeRemetente.setText("Nome: " );
+                    deletarNomeDestinatario.setText("Nome: " );
+                    deletarCep.setText("Cep: " );
+                    deletarComplemento.setText("Complemento: " );
+                    deletarNmrCasa.setText("Número da Casa: ");
 
-                JOptionPane.showMessageDialog(null, "Entrega cancelada com sucesso!");
-                deletarCPFRemetente.setText("CPF: ");
-                deletarNomeRemetente.setText("Nome: " );
-                deletarNomeDestinatario.setText("Nome: " );
-                deletarCep.setText("Cep: " );
-                deletarComplemento.setText("Complemento: " );
-                deletarNmrCasa.setText("Número da Casa: ");
-
-                deletarLogradouro.setText("Rua: " );
-                deletarBairro.setText("Bairro: ");
-                deletarCidade.setText("Cidade: " );
-                deletarEstado.setText("Estado: ");
+                    deletarLogradouro.setText("Rua: " );
+                    deletarBairro.setText("Bairro: ");
+                    deletarCidade.setText("Cidade: " );
+                    deletarEstado.setText("Estado: ");
+                }
+                else{
+                    JOptionPane.showMessageDialog(null, "erro ao excluir a entrega!!!!!!!!!!");
+                }
             }
             catch (Exception erro)
             {
@@ -547,15 +534,15 @@ public class Janela extends JFrame {
         updateTxtCidade.setEditable(false);
         updateTxtBairro.setEditable(false);
 
-        //Ação do botão atualizar
+        /*//Ação do botão atualizar
         updateProcurarEntrega.addActionListener(e -> {
             boolean encontrou = false;
             try{
                 for(var cr : vetorCorreio)
                 {
-                    if(updatetxtCodigo.getText().equals(cr.getId().toString()))
+                    if(updatetxtCodigo.getText().equals(cr.getIdCorreio().toString()))
                     {
-                        updateTxtCPFRemetente.setText(cr.getCPF());
+                        updateTxtCPFRemetente.setText(cr.getCpf());
                         updateTxtRemet.setText(cr.getNomeRemetente());
                         updateTxtNomeDest.setText(cr.getNomeDestinatario());
                         updateTxtCep.setText(cr.getCep());
@@ -580,13 +567,13 @@ public class Janela extends JFrame {
             {
                 JOptionPane.showMessageDialog(null, err.getMessage());
             }
-        });
+        });*/
 
         updateAdicionar.addActionListener(e -> {
             try{
                 Correio correio = new Correio(Integer.parseInt(updatetxtCodigo.getText()), updateTxtCPFRemetente.getText(), updateTxtRemet.getText(), updateTxtNomeDest.getText(), updateTxtCep.getText(), updateTxtComplemento.getText(), Integer.parseInt(updateTxtNmrCasa.getText()));
                 if (correio != null) {
-                    AtualizarPorID(Integer.parseInt(updatetxtCodigo.getText()), correio);
+                   // AtualizarPorID(Integer.parseInt(updatetxtCodigo.getText()), correio);
                     Correios.alterar(correio);
                 }
 

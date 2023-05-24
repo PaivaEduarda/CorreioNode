@@ -17,6 +17,23 @@ async function incluir (correio)
         return false;
     }
 }
+async function ultimoId ()
+ {
+     const conexao = await bd.getConexao ();
+     if (conexao==null) return null;
+
+     try
+     {
+         const  sql     = 'SELECT Max(idCorreio) as id FROM CorreioEntrega;';
+                 const [linhas] = await conexao.query(sql);
+                 return linhas;
+     }
+     catch (excecao)
+     {
+         return false;
+     }
+ }
+
 
 async function alterar (correio)
 {
@@ -43,8 +60,10 @@ async function excluir (correio)
 
     try
     {
+        console.log("oiyi");
         const sql   = 'DELETE FROM CorreioEntrega WHERE idCorreio=?';
-        const dados = [codigo];
+        const dados = [correio];
+        cosole.log(dados);
         await conexao.query (sql,dados);
         return true;
     }
@@ -73,7 +92,6 @@ async function getCorreio (idCorreio)
 
 async function getCorreios ()
 {
-    console.log("idCorreio");
     const conexao = await bd.getConexao();
     if (conexao==null) return null;
 
@@ -89,7 +107,7 @@ async function getCorreios ()
     }
 }
 
-module.exports = {incluir, alterar, excluir, getCorreio, getCorreios}
+module.exports = {incluir, alterar, excluir, getCorreio, getCorreios, ultimoId}
 
 
 

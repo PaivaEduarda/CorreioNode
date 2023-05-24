@@ -8,22 +8,6 @@ import bd.*;
 import bd.core.*;
 import bd.dbos.*;
 public class Correios {
-    public static boolean cadastrado(int id) throws Exception {
-        boolean retorno = false;
-        try {
-            String sql;
-            sql = "SELECT * "
-                    + "FROM CorreioEntrega "
-                    + "WHERE idCorreio = ?;";
-            BDSQLServer.COMANDO.prepareStatement(sql);
-            BDSQLServer.COMANDO.setInt(1, id);
-            MeuResultSet resultado = (MeuResultSet) BDSQLServer.COMANDO.executeQuery();
-            retorno = resultado.first();
-        } catch (SQLException erro) {
-            throw new Exception(erro.getMessage());
-        }
-        return retorno;
-    }
 
     public static void incluir(Correio correio) throws Exception {
         if (correio == null)
@@ -34,54 +18,46 @@ public class Correios {
             } catch (Exception erro) {
                 throw new Exception(erro.getMessage());
             }
-
         } catch (Exception erro) {
             throw new Exception("Erro ao inserir AAAAAAAAAA");
         }
     }
 
-    public static void excluir(int id) throws Exception {
-        if (!(cadastrado(id)))
-            throw new Exception("Código de rastreio não cadastrado!");
+    public static Boolean excluir(int id) throws Exception {
+        Boolean c = false;
         try {
-            String sql = "";
-            sql = "DELETE FROM CorreioEntrega " +
-                    "WHERE idCorreio = ?;";
-            BDSQLServer.COMANDO.prepareStatement(sql);
-            BDSQLServer.COMANDO.setInt(1, id);
+            try {
+                c = ClienteWS.delete("http://localhost:3000/RemoverCorreio", String.valueOf(id));
+            } catch (Exception erro) {
+                throw new Exception("Erro ao deletar correio");
+            }
 
-            BDSQLServer.COMANDO.executeUpdate();
-            BDSQLServer.COMANDO.commit();
-        } catch (SQLException erro) {
-            BDSQLServer.COMANDO.rollback();
-            throw new Exception(erro);
+        } catch (Exception erro) {
+            throw new Exception("Erro ao deletar AAAAAAAAAA");
         }
+        return c;
     }
 
-    public static int ultimoId() throws Exception {
+    /*public static int ultimoId() throws Exception {
+        int c;
         try {
-            int id = 0;
-            String sql = "";
-            sql = "select MAX(idCorreio) " +
-                    "as ID from CorreioEntrega";
-            BDSQLServer.COMANDO.prepareStatement(sql);
+            try {
+                c = (Correio) ClienteWS.getObjeto(Correio.class, "http://localhost:3000/ultimoId", String.valueOf(id));
 
-            MeuResultSet resultSet = (MeuResultSet) BDSQLServer.COMANDO.executeQuery();
+            } catch (Exception erro) {
+                throw new Exception("Erro ao recuperar o correio");
+            }
 
-            if (resultSet.first())
-                id = resultSet.getInt("ID");
-
-            return id + 1;
-        } catch (SQLException erro) {
-            BDSQLServer.COMANDO.rollback();
-            throw new Exception(erro);
+        } catch (Exception erro) {
+            throw new Exception("Erro ao inserir AAAAAAAAAA");
         }
-    }
+        return c;
+    }*/
 
     public static void alterar(Correio correio) throws Exception {
-        if (correio == null)
+       /* if (correio == null)
             throw new Exception("Informações não fornecidas. Verifique novamente!");
-        if (!(cadastrado(correio.getId())))
+        if (!(cadastrado(correio.getIdCorreio())))
             throw new Exception("Id não cadastrado!");
         try {
             String sql = "";
@@ -94,13 +70,13 @@ public class Correios {
                     "nmrCasa = ? " +
                     "WHERE idCorreio = ?;";
             BDSQLServer.COMANDO.prepareStatement(sql);
-            BDSQLServer.COMANDO.setString(1, correio.getCPF());
+            BDSQLServer.COMANDO.setString(1, correio.getCpf());
             BDSQLServer.COMANDO.setString(2, correio.getNomeRemetente());
             BDSQLServer.COMANDO.setString(3, correio.getNomeDestinatario());
             BDSQLServer.COMANDO.setString(4, correio.getCep());
             BDSQLServer.COMANDO.setString(5, correio.getComplemento());
             BDSQLServer.COMANDO.setInt(6, correio.getNmrCasa());
-            BDSQLServer.COMANDO.setInt(7, correio.getId());
+            BDSQLServer.COMANDO.setInt(7, correio.getIdCorreio());
 
 
             BDSQLServer.COMANDO.executeUpdate();
@@ -108,14 +84,14 @@ public class Correios {
         } catch (SQLException erro) {
             BDSQLServer.COMANDO.rollback();
             throw new Exception(erro.getMessage());
-        }
+        }*/
     }
 
     public static Correio getCorreio(int id) throws Exception {
         Correio c = null;
         try {
             try {
-                 c = (Correio) ClienteWS.getObjeto(Correio.class, "http://localhost:3000/RecuperarCorreios/id", String.valueOf(id));
+                 c = (Correio) ClienteWS.getObjeto(Correio.class, "http://localhost:3000/RecuperarCorreio", String.valueOf(id));
 
             } catch (Exception erro) {
                 throw new Exception("Erro ao recuperar o correio");

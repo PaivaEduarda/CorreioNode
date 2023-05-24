@@ -24,7 +24,7 @@ async function ultimoId ()
 
      try
      {
-         const  sql     = 'SELECT Max(idCorreio) as id FROM CorreioEntrega';
+         const  sql     = 'SELECT Max(idCorreio) as id FROM CorreioEntrega;';
                  const [linhas] = await conexao.query(sql);
                  return linhas;
      }
@@ -60,8 +60,10 @@ async function excluir (correio)
 
     try
     {
+        console.log("oiyi");
         const sql   = 'DELETE FROM CorreioEntrega WHERE idCorreio=?';
-        const dados = [codigo];
+        const dados = [correio];
+        cosole.log(dados);
         await conexao.query (sql,dados);
         return true;
     }
@@ -105,7 +107,7 @@ async function getCorreios ()
     }
 }
 
-module.exports = {incluir, alterar, excluir, getCorreio, getCorreios}
+module.exports = {incluir, alterar, excluir, getCorreio, getCorreios, ultimoId}
 
 
 

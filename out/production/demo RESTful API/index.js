@@ -28,6 +28,7 @@ async function ativacaoDoServidor ()
     app.delete ('/RemoverCorreio/:idCorreio', rotas.remocao);
     app.get    ('/RecuperarCorreio/:idCorreio', rotas.recuperacaoDeUm);
     app.get    ('/correios'        , rotas.recuperacaoDeTodos);
+    app.get    ('/ultimoId'        , rotas.ultimoId);
 
     console.log ('Servidor ativo na porta 3000...');
     app.listen(3000);

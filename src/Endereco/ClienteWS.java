@@ -24,38 +24,61 @@ public class ClienteWS
                                     String... parametros)
     {
         Object objetoRetorno = null;
-	
+
         try
         {
-            /*
-            for (int i=0; i<parametros.length; i++)
-                urlWebService = urlWebService + "/" + parametros[i].replaceAll(" ", "%20");
-            */ 
             for (String parametro : parametros)
                 urlWebService = urlWebService + "/" + parametro.replaceAll(" ", "%20");
-		
+
             URL url = new URL (urlWebService);
             HttpURLConnection connection =
-            (HttpURLConnection) url.openConnection();
+                    (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.setConnectTimeout(15000);
-            //connection.setRequestProperty("login", "seulogin");
-            //connection.setRequestProperty("password", "suasenha");
             connection.connect();
 
             String responseJson = inputStreamToString(connection.getInputStream());
             connection.disconnect();
-		
+
             return fromJson(responseJson, tipoObjetoRetorno);
         }
         catch (Exception erro)
         {
-             erro.printStackTrace();
-        }	
+            erro.printStackTrace();
+        }
 
         return objetoRetorno;
     }
+   /* public static Object getUltimoId(Class tipoObjetoRetorno,
+                                     String urlWebService)
+{
+    Object objetoRetorno = null;
 
+    try
+    {
+        for (String parametro : parametros)
+            urlWebService = urlWebService + "/" + parametro.replaceAll(" ", "%20");
+
+        URL url = new URL (urlWebService);
+        HttpURLConnection connection =
+                (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setConnectTimeout(15000);
+        connection.connect();
+
+        String responseJson = inputStreamToString(connection.getInputStream());
+        connection.disconnect();
+
+        return fromJson(responseJson, tipoObjetoRetorno);
+    }
+    catch (Exception erro)
+    {
+        erro.printStackTrace();
+    }
+
+    return objetoRetorno;
+}
+*/
     public static Object postObjeto (Object objetoEnvio,
                                      Class tipoObjetoRetorno,
                                      String urlWebService)
@@ -96,6 +119,40 @@ public class ClienteWS
         }
 
         return objetoRetorno;
+    }
+    public static Boolean delete (String urlWebService,
+                                 String... parametros)
+    {
+        boolean deletou = false;
+        try
+        {
+            for (String parametro : parametros)
+                urlWebService = urlWebService + "/" + parametro.replaceAll(" ", "%20");
+            URL url = new URL(urlWebService);
+            HttpURLConnection connection =
+            (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("DELETE");
+            connection.setDoOutput(true);
+            connection.setUseCaches(false);
+	        connection.setConnectTimeout(150);
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("Accept", "application/json");
+
+			
+            DataOutputStream stream =
+            new DataOutputStream (connection.getOutputStream());
+            stream.flush();
+            stream.close();
+            connection.connect();
+            connection.disconnect();
+            deletou = true;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        return deletou;
     }
 
 
@@ -138,6 +195,8 @@ public class ClienteWS
 
     public static Object fromJson(String json, Class objectClass) throws Exception
     {
+        json = json.replace('[', ' ').replace(']', ' ');
+        System.out.println(json);
         JsonFactory f = new MappingJsonFactory();
         JsonParser jp = f.createJsonParser(json);
         Object obj = jp.readValueAs(objectClass);

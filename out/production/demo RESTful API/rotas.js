@@ -74,7 +74,7 @@ async function atualizacao (req, res)
         return res.status(400).json(erro);    
     }
     
-    let ret = await Correios.recupereUm(idCorreio);
+    let ret = await Correios.recuperacaoDeUm(idCorreio);
 
     if (ret===null)
     {
@@ -94,7 +94,7 @@ async function atualizacao (req, res)
         return res.status(404).json(erro);
     }
 
-    ret = await Correios.atualize(Correio);
+    ret = await Correios.alterar(Correio);
 
     if (ret===null)
     {
@@ -118,6 +118,8 @@ async function atualizacao (req, res)
 // para a rota de DELETE
 async function remocao (req, res)
 {
+    console.log("ret");
+
     if (Object.values(req.body).length!=0)
     {
         const erro = Comunicado.novo('DSP','Fornecimento de dados sem propósito','Foram fornecidos dados sem necessidade no corpo da requisição').object;
@@ -125,8 +127,9 @@ async function remocao (req, res)
     }
     
     const idCorreio = req.params.idCorreio;
-    let ret = await Correios.recupereUm(idCorreio);
-
+    console.log(idCorreio);
+    let ret = await Correios.recuperacaoDeUm(idCorreio);
+    console.log(ret);
     if (ret===null)
     {
         const  erro = Comunicado.novo('CBD','Sem conexão com o BD','Não foi possível estabelecer conexão com o banco de dados').object;
@@ -145,7 +148,8 @@ async function remocao (req, res)
         return res.status(404).json(erro);
     }
 
-    ret = await Correios.remova(codigo);
+    ret = await Correios.excluir(ret);
+    console.log(ret);
 
     if (ret===null)
     {
@@ -162,6 +166,7 @@ async function remocao (req, res)
   //if (ret===true)
   //{
         const sucesso = Comunicado.novo('RBS','Remoção bem sucedida','O correio foi removido com sucesso').object;
+        console.log(sucesso);
         return res.status(200).json(sucesso);
   //}    
 }
@@ -209,7 +214,31 @@ async function recuperacaoDeTodos (req, res)
         return res.status(422).json(erro);
     }
 
-    const ret = await Correios.getCorreios();
+    const ret = await Correios.recuperacaoDeUm();
+
+    if (ret===null)
+    {
+        const  erro = Comunicado.novo('CBD','Sem conexão com o BD','Não foi possível estabelecer conexão com o banco de dados').object;
+        return res.status(500).json(erro);
+    }
+
+    if (ret===false)
+    {
+        const  erro = Comunicado.novo('FNC','Falha no comando SQL','O comando SQL apresenta algum erro').object;
+        return res.status(409).json(erro);
+    }
+
+    return res.status(200).json(ret);
+}
+async function ultimoId (req, res)
+{
+    if (Object.values(req.body).length!=0)
+    {
+        const erro = Comunicado.novo('DSP','Fornecimento de dados sem propósito','Foram fornecidos dados sem necessidade no corpo da requisição').object;
+        return res.status(422).json(erro);
+    }
+
+    const ret = await Correios.ultimoId();
 
     if (ret===null)
     {
@@ -226,4 +255,4 @@ async function recuperacaoDeTodos (req, res)
     return res.status(200).json(ret);
 }
 
-module.exports = {inclusao, atualizacao, remocao, recuperacaoDeUm, recuperacaoDeTodos}
+module.exports = {inclusao, atualizacao, remocao, recuperacaoDeUm, recuperacaoDeTodos, ultimoId}

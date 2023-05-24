@@ -9,7 +9,7 @@ public class Correio implements Cloneable
     private String complemento;
     private int nmrCasa;
 
-    public void setCPF(String cpf) throws Exception
+    public void setCpf(String cpf) throws Exception
     {
         if(cpf.length() != 11)
             throw new Exception("CPF inválido");
@@ -19,7 +19,7 @@ public class Correio implements Cloneable
 
         this.cpf = cpf;
     }
-    public void setCEP(String cep) throws Exception
+    public void setCep(String cep) throws Exception
     {
         if(cep.length() != 8)
             throw new Exception("CEP inválido");
@@ -74,7 +74,7 @@ public class Correio implements Cloneable
     }
 
 
-    public String getCPF()
+    public String getCpf()
     {
         return this.cpf;
     }
@@ -104,21 +104,22 @@ public class Correio implements Cloneable
         return this.nmrCasa;
     }
 
-    public Integer getId()
+    public Integer getIdCorreio()
     {
         return this.idCorreio;
     }
 
-    public Correio( int id, String cpf, String nomeRemetente, String nomeDestinatario, String cep, String complemento, int nmrCasa) throws Exception
+    public Correio( int idCorreio, String cpf, String nomeRemetente, String nomeDestinatario, String cep, String complemento, int nmrCasa) throws Exception
     {
-        idCorreio = id;
-        this.setCPF(cpf);
+        this.idCorreio = idCorreio;
+        this.setCpf(cpf);
         this.setNomeRemetente(nomeRemetente);
         this.setNomeDestinatario(nomeDestinatario);
-        this.setCEP(cep);
+        this.setCep(cep);
         this.setComplemento(complemento);
         this.setNmrCasa(nmrCasa);
     }
+    public Correio() {}
 
     public String toString()
     {
