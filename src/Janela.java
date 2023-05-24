@@ -229,13 +229,13 @@ public class Janela extends JFrame {
         ler.add(estado);
         ler.add(complemento);
         ler.add(nmrCasa);
-
+        Correio corr = new Correio();
         procurarEntrega.addActionListener(e ->{
             try {
+                corr = Correios.getCorreio(Integer.parseInt(txtCodigo.toString()));
                 boolean encontrou = false;
-                for(var cr : vetorCorreio)
-                {
-                    if(txtCodigo.getText().equals(cr.getId().toString())) {
+
+                    if(txtCodigo.getText().equals(corr.getId().toString())) {
                         cpfRemetente.setText("CPF: " + cr.getCPF());
                         nomeRemetente.setText("Nome: " + cr.getNomeRemetente());
                         nomeDestinatario.setText("Nome: " + cr.getNomeDestinatario());
@@ -251,8 +251,8 @@ public class Janela extends JFrame {
                         estado.setText("Estado: " + agencia.getEstado());
                         encontrou = true;
                     }
-                }
-                encontrarInfo(encontrou);
+
+                //encontrarInfo(encontrou);
             }
             catch (Exception err)
             {
@@ -551,7 +551,6 @@ public class Janela extends JFrame {
         updateProcurarEntrega.addActionListener(e -> {
             boolean encontrou = false;
             try{
-                JOptionPane.showMessageDialog(null, vetorCorreio.get(8));
                 for(var cr : vetorCorreio)
                 {
                     if(updatetxtCodigo.getText().equals(cr.getId().toString()))
