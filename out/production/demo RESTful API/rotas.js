@@ -15,12 +15,12 @@ async function inclusao (req, res)
     let Cor;
     try
     {
-        Cor = Correio.novo (req.body.cpf,req.body.nomeRemetente, req.body.nomeDestinatario, req.body.cep, req.body.complemento, req.body.nmrCasa);
+        Cor = Correio.novo (0, req.body.cpf,req.body.nomeRemetente, req.body.nomeDestinatario, req.body.cep, req.body.complemento, req.body.nmrCasa);
     }
 
     catch (excecao)
     {
-        console.log("oi");
+        console.log(req.body);
         const erro = Comunicado.novo('TDE','Dados de tipos errados','Codigo deve ser um numero natural positivo, nome deve ser um texto não vazio e preço deve ser um número real positivo').object;
         return res.status(422).json(erro);
     }
@@ -51,6 +51,7 @@ async function atualizacao (req, res)
 {
     if (Object.values(req.body).length!= 7 || !req.body.cpf || !req.body.nomeRemetente || !req.body.nomeDestinatario || !req.body.cep || !req.body.complemento || !req.body.nmrCasa)
     {
+        console.log("caju 1");
         const erro = Comunicado.novo('DdI','Dados inesperados','Não foram fornecidos exatamente as 6 informações esperadas de um Correio (cpf, nomeRemetente, nomeDestinatario, cep, complemento e nmrCasa)').object;
         return res.status(422).json(erro);
     }
@@ -62,6 +63,7 @@ async function atualizacao (req, res)
     }
     catch (excecao)
     {
+        console.log("caju");
         const erro = Comunicado.novo('TDE','Dados de tipos errados','Codigo deve ser um numero natural positivo, nome deve ser um texto não vazio e preço deve ser um número real positivo').object;
         return res.status(422).json(erro);
     }

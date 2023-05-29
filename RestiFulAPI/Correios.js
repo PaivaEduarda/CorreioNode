@@ -18,30 +18,33 @@ async function incluir (correio)
     }
 }
 async function ultimoId ()
- {
-     const conexao = await bd.getConexao ();
-     if (conexao==null) return null;
-
-     try
-     {
-         const  sql     = 'SELECT Max(idCorreio) as id FROM CorreioEntrega;';
-                 const [linhas] = await conexao.query(sql);
-                 return linhas;
-     }
-     catch (excecao)
-     {
-         return false;
-     }
- }
-
-
-async function alterar (correio)
 {
     const conexao = await bd.getConexao ();
     if (conexao==null) return null;
 
     try
     {
+        const  sql     = 'SELECT * FROM CorreioEntrega WHERE idCorreio = (SELECT Max(idCorreio) as id FROM CorreioEntrega);';
+        const [linhas] = await conexao.query(sql);
+        return linhas;
+    }
+    catch (excecao)
+    {
+        return false;
+    }
+}
+
+
+async function alterar (correio)
+{
+    const conexao = await bd.getConexao ();
+    console.log(conexao);
+    if (conexao==null) return null;
+
+    try
+    {
+        console.log(correio);
+        console.log("correio");
         const sql   = 'UPDATE CorreioEntrega SET cpf=?, nomeRemetente=?, nomeDestinatario=?, cep=?, complemento=?, nmrCasa=? WHERE idCorreio=?';
         const dados = [correio.cpf,correio.nomeRemetente,correio.nomeDestinatario,correio.cep,correio.complemento, correio.nmrCasa, correio.idCorreio];
 

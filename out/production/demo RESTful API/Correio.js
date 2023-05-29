@@ -16,7 +16,7 @@ class Correio
         this.cep = cep
         this.complemento = complemento
         this.nmrCasa = nmrCasa
-        this.idCorreio = idCorreio
+        this.#idCorreio = idCorreio;
     }
 
     get idCorreio ()

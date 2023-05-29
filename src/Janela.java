@@ -335,19 +335,18 @@ public class Janela extends JFrame {
                         JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
                 System.out.println(x);
 
-                if(x == 0)
-                {
+                if(x == 0) {
                     if (correio != null) {
-                        try{
-                             Correios.incluir(correio);
-                             /*addCodigo.setText(String.valueOf(Correios.ultimoId()));*/
-                        }
-                        catch (Exception erro) {
+                        try {
+                            Correios.incluir(correio);
+                            /*addCodigo.setText(String.valueOf(Correios.ultimoId()));*/
+                        } catch (Exception erro) {
                             JOptionPane.showMessageDialog(null, "Erro ao incluir!");
                         }
 
                     }
                     JOptionPane.showMessageDialog(null, "Entrega incluida com sucesso!");
+                    JOptionPane.showMessageDialog(null, "Seu código de rastreio é:" + Integer.toString(Correios.ultimoId()));
                 }
             }
             catch (Exception erro)

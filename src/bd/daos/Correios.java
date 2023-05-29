@@ -2,11 +2,13 @@ package bd.daos;
 
 import java.sql.*;
 import java.util.LinkedHashMap;
+import java.util.concurrent.CompletableFuture;
 
 import Endereco.ClienteWS;
 import bd.*;
 import bd.core.*;
 import bd.dbos.*;
+
 public class Correios {
 
     public static void incluir(Correio correio) throws Exception {
@@ -39,27 +41,26 @@ public class Correios {
         return c;
     }
 
-    /*public static int ultimoId() throws Exception {
-        int c;
+    public static int ultimoId() throws Exception {
+        Correio c;
         try {
-            try {
-                c = (Correio) ClienteWS.getObjeto(Correio.class, "http://localhost:3000/ultimoId", String.valueOf(id));
-
-            } catch (Exception erro) {
-                throw new Exception("Erro ao recuperar o correio");
+            c = (Correio) ClienteWS.getObjeto(Correio.class, "http://localhost:3000/ultimoId");
+            while(c==null){
+                continue;
             }
-
+            return c.getIdCorreio();
         } catch (Exception erro) {
-            throw new Exception("Erro ao inserir AAAAAAAAAA");
+            throw new Exception("Erro ao recuperar o correio");
         }
-        return c;
-    }*/
+    }
 
     public static void alterar(Correio correio) throws Exception {
         if (correio == null)
             throw new Exception("entrega ainda não cadastrada!");
         try {
             try {
+                System.out.println(correio.getIdCorreio());
+                System.out.println("aaaaaaaaaaaaaaaaaaaaaaa");
                 ClienteWS.putObjeto(correio, LinkedHashMap.class, "http://localhost:3000/atualizarCorreio/" + correio.getIdCorreio());
             } catch (Exception erro) {
                 throw new Exception(erro.getMessage());
@@ -73,7 +74,7 @@ public class Correios {
         Correio c = null;
         try {
             try {
-                 c = (Correio) ClienteWS.getObjeto(Correio.class, "http://localhost:3000/RecuperarCorreio", String.valueOf(id));
+                c = (Correio) ClienteWS.getObjeto(Correio.class, "http://localhost:3000/RecuperarCorreio", String.valueOf(id));
 
             } catch (Exception erro) {
                 throw new Exception("Erro ao recuperar o correio");

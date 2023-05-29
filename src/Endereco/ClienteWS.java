@@ -44,41 +44,11 @@ public class ClienteWS
         }
         catch (Exception erro)
         {
-            //erro.printStackTrace();
+            erro.printStackTrace();
         }
 
         return objetoRetorno;
     }
-   /* public static Object getUltimoId(Class tipoObjetoRetorno,
-                                     String urlWebService)
-{
-    Object objetoRetorno = null;
-
-    try
-    {
-        for (String parametro : parametros)
-            urlWebService = urlWebService + "/" + parametro.replaceAll(" ", "%20");
-
-        URL url = new URL (urlWebService);
-        HttpURLConnection connection =
-                (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-        connection.setConnectTimeout(15000);
-        connection.connect();
-
-        String responseJson = inputStreamToString(connection.getInputStream());
-        connection.disconnect();
-
-        return fromJson(responseJson, tipoObjetoRetorno);
-    }
-    catch (Exception erro)
-    {
-        erro.printStackTrace();
-    }
-
-    return objetoRetorno;
-}
-*/
     public static Object postObjeto (Object objetoEnvio,
                                      Class tipoObjetoRetorno,
                                      String urlWebService)
